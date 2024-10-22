@@ -1,10 +1,12 @@
-# RMCL
+# RMCL 2.0
 # 你谷之巅
 ## ~~建议~~强制使用[小熊猫C++ （密码：f0tp）](https://wwe.lanzoui.com/b01os0mwd)
 
 内核：[CMCL2](https://github.com/MrShieh-X/console-minecraft-launcher/)
 
 Minecraft 启动器
+
+在之前的版本上做了针对 UI 界面的调整
 
 >洛谷上纯 Cpp 的 Minecraft 启动器巅峰
 
