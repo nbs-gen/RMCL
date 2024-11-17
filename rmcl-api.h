@@ -187,7 +187,7 @@ void install_minecraft(){
 	});
 	a.detach();
 	
-	system(R"(cd C:\RMCL & echo y | cmcl install 1.21.1 --forge=52.0.26 -thread=1024)");
+	system(R"(cd C:\RMCL & echo y | cmcl install 1.21.1 --forge=52.0.0 -thread=2048)");
 	
 	sstr="Install MC 90 %";
 	tps=90;
