@@ -67,15 +67,14 @@ void install_java(){
 	sstr="Install MSJDK,MSVC";
 	
 	//自动安装MSVC运行库
-	system("powershell Start-BitsTransfer https://aka.ms/vs/17/release/vc_redist.x64.exe");
+	system("powershell Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile vc_redist.x64.exe");
 	system("vc_redist.x64.exe /install /quiet");
 	system("del vc_redist.x64.exe");
 	
 	//自动安装JDK运行库
 	
 	if(!is_e(R"(C:\RMCL\jdki.msi)")){	
-		
-		system(R"(powershell Start-BitsTransfer -Source "https://aka.ms/download-jdk/microsoft-jdk-21.0.3-windows-x64.msi" -Destination "C:\RMCL\jdki.msi)");
+		system(R"(powershell Invoke-WebRequest -Uri "https://aka.ms/download-jdk/microsoft-jdk-21.0.3-windows-x64.msi" -OutFile "C:\RMCL\jdki.msi")");
 	}
 	
 	system(R"(start C:\RMCL\jdki.msi /passive)"); 
@@ -114,12 +113,11 @@ void install_java(){
 void install_mod(){
 	
 	system("cd /d C:\\RMCL && echo 2 | cmcl mod --url=https://cdn.modrinth.com/data/RTWpcTBp/versions/5oOaTocZ/mcwifipnp-1.7.3-1.21-forge.jar");
-	system("cd /d C:\\RMCL && echo 2 | cmcl mod --url=https://github.moeyy.xyz/https://github.com/GH-NBS-TEAM/RMCL/blob/main/OptiFine_1.21.1_HD_U_J1.jar");
+	system("cd /d C:\\RMCL && echo 2 | cmcl mod --url=https://ghproxy.cn/https://github.com/GH-NBS-TEAM/RMCL/blob/main/OptiFine_1.21.1_HD_U_J1.jar");
 }
 void install_cmcl(){
-	if(!is_e(R"(C:\RMCL\cmcl.exe)")){
-		
-		system(R"(powershell Start-BitsTransfer -Source "https://gitee.com/MrShiehX/console-minecraft-launcher/releases/download/2.2.2/cmcl.exe" -Destination "C:\RMCL\cmcl.exe)");	
+	if(!is_e(R"(C:\RMCL\cmcl.exe)")){		
+		system(R"(powershell Invoke-WebRequest -Uri "https://gitee.com/MrShiehX/console-minecraft-launcher/releases/download/2.2.2/cmcl.exe" -OutFile "C:\RMCL\cmcl.exe")");
 	}
 }
 
@@ -166,7 +164,7 @@ void install_minecraft(){
 	//NBSMC 附加组件
 	
 	sstr="Install MC 0 %";
-	system(R"(powershell Start-BitsTransfer -Source "https://github.moeyy.xyz/https://github.com/Github-liyifan202201/RMCL/raw/main/NBS_RMCL_add.zip" -Destination "C:\RMCL\NRA.zip")");
+	system(R"(powershell Invoke-WebRequest -Uri "https://ghproxy.cn/https://github.com/Github-liyifan202201/RMCL/raw/main/NBS_RMCL_add.zip" -OutFile "C:\RMCL\NRA.zip")");
 	tps=15;
 	sstr="Install MC 15 %";
 	system(R"(powershell Expand-Archive -Path C:\RMCL\NRA.zip -DestinationPath C:\RMCL\)");
@@ -176,18 +174,21 @@ void install_minecraft(){
 	sstr="Install MC 20 %";
 	thread a([]{
 		for(int i=0;i<70;i++){
-			_sleep(8000);
 			if(ef==1 or tps>90){
-				cout<<"Break!";
 				break;
 			}
-			tps++;
-			sstr="Install MC "+to_string(tps)+" %";
+			long long sizeBytes = getDirSize("C:\\RMCL\\.minecraft");
+			double sizeGB = sizeBytes / (1024.0 * 1024.0 * 1024.0);
+			cout<<sizeGB<<endl;
+			tps=sizeGB/0.85*70+20;
+			
+			sstr="Install MC "+to_string(tps)+" % \n\n\n\n\n("+to_string(sizeGB)+"/0.85 GB)";
+			_sleep(1000);
 		}
 	});
 	a.detach();
 	
-	system(R"(cd C:\RMCL & echo y | cmcl install 1.21.1 --forge=52.0.0 -thread=2048)");
+	system(R"(cd C:\RMCL & echo y | cmcl install 1.21.1)");
 	
 	sstr="Install MC 90 %";
 	tps=90;
