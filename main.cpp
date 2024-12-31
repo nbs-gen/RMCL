@@ -6,7 +6,7 @@ using namespace std;
 #include "raymath.h"
 #include "raygui.h"
 #include "rmcl-api.h"
-
+#include <commdlg.h>
 typedef enum { MAIN, SET } Screen;
 
 namespace fs = filesystem;
@@ -20,9 +20,8 @@ char usernameBuffer[64];
 void HandleUsernameInput() {
 	if (!is_e("C:/RMCL/cmcl.json")) update_name("Steve");
 	if (flagedit == 0) {
-		for (int i = 0; i < get_name().size(); i++) {
+		for (int i = 0; i < get_name().size(); i++)
 			usernameBuffer[i] = get_name()[i];
-		}
 	}
 
 	Rectangle inputBox = { 80, 400, 150, 40 };
@@ -60,8 +59,9 @@ void HandleUsernameInput() {
 	}
 }
 
-
-
+//动画
+int fcnt = 0;
+float fpg = 1;
 
 void DrawBottomBar(float w, float h) {
 	float bh = h / 3;
@@ -83,9 +83,9 @@ void DrawBottomBar(float w, float h) {
 	}
 }
 
-
 void drawhome(float w, float h) {
-	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+	if (fcnt <= 36)
+		return;
 	DrawBottomBar(w, h); // 绘制底栏
 	if (GuiButton((Rectangle) {
 	w / 2 - 60, h / 2 + 65, 150, 40
@@ -116,9 +116,32 @@ void drawhome(float w, float h) {
 	}
 
 }
-int menuIndex = -1, modIndex = -1; // 当前一级菜单索引 (0: General, 1: Mod, 2: About)
-
+int menuIndex = -1, modIndex = -1;// 当前一级菜单索引 (0: General, 1: Mod, 2: About)
+void fresh(float w, float h, bool f) {
+	if (fcnt >= 36) {
+		fcnt = 1145;
+		return;
+	}
+	if (fcnt <= 18)
+		fpg += fcnt;
+	else
+		fpg += 36 - fcnt;
+	fcnt++;
+	if (f == 0) {
+		if (fcnt <= 18)
+			DrawRectangle(50, h - fpg - h / 3, w - 50, h + 10, Fade(RAYWHITE, 0.7f+fcnt * 0.01));
+		else
+			DrawRectangle(50, h - fpg - h / 3, w - 50, h + 10, Fade(RAYWHITE, 0.9f-(fcnt - 18) * 0.01));
+	} else {
+		if (fcnt <= 18)
+			DrawRectangle(50, fpg, w - 50,h + 10, Fade(RAYWHITE, 0.7f+fcnt * 0.01));
+		else
+			DrawRectangle(50, fpg, w - 50, h +10, Fade(RAYWHITE, 0.9f-(fcnt - 18) * 0.01));
+	}
+}
 void drawSettings(float w, float h) {
+	if (fcnt <= 36)
+		return;
 	// 绘制背景
 	DrawRectangle(50, 0, w - 50, h, Fade(RAYWHITE, 0.7f));
 	// 菜单相关变量
@@ -132,7 +155,7 @@ void drawSettings(float w, float h) {
 	for (int i = 0; i < menuCount; i++) {
 		Rectangle menuItemRect = { 55, (float)(i * 60 + 80), mW - 10, 40 };
 		if (GuiButton(menuItemRect, menuItems[i])) {
-			menuIndex = i;  // 点击切换菜单索引
+			menuIndex = i; // 点击切换菜单索引
 		}
 	}
 	DrawLine(50 + mW, 0, 50 + mW, h, BLUE);
@@ -143,6 +166,8 @@ void drawSettings(float w, float h) {
 
 		for (const auto& entry : fs::directory_iterator(path)) {
 			if (entry.is_regular_file()) {
+				if(entry.path().filename().string().find("nbs-")!=-1)
+					continue;
 				files.push_back(entry.path().filename().string());
 				if (files.back().find(".jar") != -1) {
 					for (int i = 1; i <= 4; i++)
@@ -152,11 +177,10 @@ void drawSettings(float w, float h) {
 		}
 	}
 	// 绘制右侧二级菜单内容
-	if (menuIndex != -1) {
+	if (menuIndex != -1)
 		DrawText(menuItems[menuIndex], 460 + mW, 20, 40, DARKBLUE);
-	}
 	switch (menuIndex) {
-		case 0: {  // General
+		case 0: { // General
 			modIndex = -1;
 			// 三个文件按钮
 			if (GuiButton((Rectangle) {
@@ -180,6 +204,9 @@ void drawSettings(float w, float h) {
 			break;
 		}
 		case 1: {
+			if(files.size()==0){
+				DrawText("You haven't installed any mods.", 400, 170, 20, BLACK);
+			}
 			int cnt = 0;
 			for (const auto& file : files) {
 				if (GuiButton((Rectangle) {
@@ -190,21 +217,82 @@ void drawSettings(float w, float h) {
 				}
 				cnt += 60;
 			}
-			if (modIndex != -1)
-				DrawText(files[modIndex].c_str(), mW + (w - mW) / 2, 500, 20, BLACK);
+
+			if (modIndex != -1) {
+				string sh="[";
+				sh+=files[modIndex][0];
+				sh+=files[modIndex][1];
+				sh+=files[modIndex][2];
+				sh+=files[modIndex][3];
+				sh+=files[modIndex][4];
+				sh+="...] What do you want to do for this mod?";
+				DrawText(sh.c_str(), 320, 360, 20, BLACK);
+				if (GuiButton((Rectangle) {
+				mW + 55, 400, (854 - mW - 60)/2-5, 40
+				}, "Del")) {
+					string shell=R"(del /q C:\RMCL\.minecraft\mods\)"+files[modIndex]+".jar";
+					system(shell.c_str());
+					modIndex=-1;
+				}
+				if (GuiButton((Rectangle) {
+				mW + 60+(854 - mW - 60)/2, 400, (854 - mW - 60)/2-5, 40
+				}, "Cancel")) {
+
+					modIndex=-1;
+				}
+			}
+			else {
+				if (GuiButton((Rectangle) {
+				mW + 55, 400, (854 - mW - 60)/2-5, 40
+				}, "Download the mod")) {
+					system("start https://modrinth.com/mods?v=1.21.1");
+				}
+				if (GuiButton((Rectangle) {
+				mW + 60+(854 - mW - 60)/2, 400, (854 - mW - 60)/2-5, 40
+				}, "Install local mods")) {
+					winapi::OPENFILENAME ofn; 
+					char szFile[260];
+					
+					ZeroMemory(&ofn, sizeof(ofn));
+					ofn.lStructSize = sizeof(ofn);
+					ofn.hwndOwner = NULL;
+					ofn.lpstrFile = szFile;
+					ofn.lpstrFile[0] = '\0';
+					ofn.nMaxFile = sizeof(szFile);
+					ofn.lpstrFilter = "Mod\0*.JAR\0";
+					ofn.nFilterIndex = 1;
+					ofn.lpstrFileTitle = NULL;
+					ofn.nMaxFileTitle = 0;
+					ofn.lpstrInitialDir = NULL;
+					ofn.lpstrTitle = "Select a file";
+					ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+					
+					if (winapi::GetOpenFileName(&ofn) == TRUE) {
+						// 打开文件后的操作
+						string shell="xcopy "+(string)ofn.lpstrFile+R"( C:\RMCL\.minecraft\mods\ /s /e /y)";
+						system(shell.c_str());
+					}
+				}
+			}
 			break;
 		}
 		case 2: {
 			modIndex = -1;
+			DrawText("RMCL v2.1", 450, 160, 45, BLACK);
+			
+			DrawText("By Next Block Studio", 450, 450, 20, BLACK);
 			break;
 		}
 	}
+
 }
 
 int main() {
 	winapi::ShowWindow(winapi::GetConsoleWindow(), SW_HIDE);
-	system("taskkill /f /im cmcl.exe");
+//	SetConfigFlags(FLAG_WINDOW_HIGHDPI|FLAG_MSAA_4X_HINT);
 	InitWindow(854, 480, "RMCL");
+	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
+	SetTargetFPS(60);
 	Image icon = LoadImage("RI.png");
 	SetWindowIcon(icon);
 	UnloadImage(icon); // 使用后卸载图标
@@ -264,14 +352,20 @@ int main() {
 		if (currentScreen == MAIN) {
 			if (hvrSet && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 				currentScreen = SET;
+				fpg = 1;
+				fcnt = 0;
 			}
+			fresh(w, h, 1);
 			drawhome(w, h);
+
 		} else if (currentScreen == SET) {
 			if (hvrHome && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 				currentScreen = MAIN;
 				menuIndex = -1;
-
+				fpg = 1;
+				fcnt = 0;
 			}
+			fresh(w, h, 0);
 			drawSettings(w, h);
 		}
 

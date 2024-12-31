@@ -107,13 +107,13 @@ void install_java(){
 	if(system("java -version")==0){
 		show=1;
 		sstr="Error #1";
-	
+		
 	}
 }
 void install_mod(){
 	
 	system("cd /d C:\\RMCL && echo 2 | cmcl mod --url=https://cdn.modrinth.com/data/RTWpcTBp/versions/5oOaTocZ/mcwifipnp-1.7.3-1.21-forge.jar");
-	system("cd /d C:\\RMCL && echo 2 | cmcl mod --url=https://ghproxy.cn/https://github.com/GH-NBS-TEAM/RMCL/blob/main/OptiFine_1.21.1_HD_U_J1.jar");
+	system("cd /d C:\\RMCL && echo 2 | cmcl mod --url=https://ghproxy.cn/https://github.com/nbs-gen/RMCL-PACK/blob/main/OptiFine_1.21.1_HD_U_J1.jar");
 }
 void install_cmcl(){
 	if(!is_e(R"(C:\RMCL\cmcl.exe)")){		
@@ -164,7 +164,7 @@ void install_minecraft(){
 	//NBSMC 附加组件
 	
 	sstr="Install MC 0 %";
-	system(R"(powershell Invoke-WebRequest -Uri "https://ghproxy.cn/https://github.com/Github-liyifan202201/RMCL/raw/main/NBS_RMCL_add.zip" -OutFile "C:\RMCL\NRA.zip")");
+	system(R"(powershell Invoke-WebRequest -Uri "https://gitproxy.click/https://github.com/nbs-gen/RMCL-PACK/blob/main/NRA.zip" -OutFile "C:\RMCL\NRA.zip")");
 	tps=15;
 	sstr="Install MC 15 %";
 	system(R"(powershell Expand-Archive -Path C:\RMCL\NRA.zip -DestinationPath C:\RMCL\)");
@@ -206,7 +206,7 @@ void install_minecraft(){
 		tps=0;
 		sstr="Error #3";
 	}
-		
+	
 }
 void launch_minecraft(){
 	
@@ -249,3 +249,4 @@ string get_name() {
 	}
 	return "";
 }
+
