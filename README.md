@@ -38,7 +38,7 @@
 欢迎通过提交 Pull Request 或 Issue 来贡献代码和反馈问题。
 
 ## 联系我们
-s
-- **官网**: <nbs-gen.github.io>
+
+- **官网**: [](nbs-gen.github.io)
 - **Bug反馈**: [Github issues](https://github.com/nbs-gen/RMCL/issues)
 
