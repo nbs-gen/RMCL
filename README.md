@@ -1,4 +1,12 @@
-# RMCL 2.1！
+# Rapid Minecraft Launcher 
+
+---
+
+请与 round studio 开发的 RMCL 区分，这个是方块工作室（NBS）开发的 RMCL。
+
+---
+
+
 一个为 OIer 而服务的纯 C++ Minecraft 启动器！
 
 为那些刚入坑的玩家提供比 PCL2 更无脑的方式，去游玩这经过方块工作室优化后的 MC
