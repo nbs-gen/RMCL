@@ -7,6 +7,7 @@ using namespace std;
 #include "raygui.h"
 #include "rmcl-api.h"
 #include <commdlg.h>
+//Need -lcomdlg32 -lgdi32
 typedef enum { MAIN, SET } Screen;
 
 namespace fs = filesystem;
@@ -100,21 +101,27 @@ void drawhome(float w, float h) {
 			a.detach();
 		}
 		fm = 1;
-		if (!is_e(R"(C:\RMCL\.minecraft\versions\1.21.1\1.21.1.jar)")) {
+		if (!is_e(R"(C:\RMCL\.minecraft\versions\neoforge-21.4.76-beta\neoforge-21.4.76-beta.jar)")) {
 			fm = 0;
-			while (fj == 0);
 			ef = 0;
-			thread a([] { install_minecraft(); ef = 1; if (sstr.find("Error") == -1) fm = 1; });
+			thread a([] {
+
+				while (fj == 0)
+					_sleep(10);
+				install_minecraft();
+				ef = 1;
+				if (sstr.find("Error") == -1)
+					fm = 1;
+			});
 			a.detach();
 		}
-		thread st([] { while (fm == 0) {
-		_sleep(10);
-		}
-		launch_minecraft();
-		             });
+		thread st([] {
+			while (fm == 0)
+				_sleep(10);
+			launch_minecraft();
+		});
 		st.detach();
 	}
-
 }
 int menuIndex = -1, modIndex = -1;// 当前一级菜单索引 (0: General, 1: Mod, 2: About)
 void fresh(float w, float h, bool f) {
@@ -134,9 +141,9 @@ void fresh(float w, float h, bool f) {
 			DrawRectangle(50, h - fpg - h / 3, w - 50, h + 10, Fade(RAYWHITE, 0.9f-(fcnt - 18) * 0.01));
 	} else {
 		if (fcnt <= 18)
-			DrawRectangle(50, fpg, w - 50,h + 10, Fade(RAYWHITE, 0.7f+fcnt * 0.01));
+			DrawRectangle(50, fpg, w - 50, h + 10, Fade(RAYWHITE, 0.7f+fcnt * 0.01));
 		else
-			DrawRectangle(50, fpg, w - 50, h +10, Fade(RAYWHITE, 0.9f-(fcnt - 18) * 0.01));
+			DrawRectangle(50, fpg, w - 50, h + 10, Fade(RAYWHITE, 0.9f-(fcnt - 18) * 0.01));
 	}
 }
 void drawSettings(float w, float h) {
@@ -166,7 +173,7 @@ void drawSettings(float w, float h) {
 
 		for (const auto& entry : fs::directory_iterator(path)) {
 			if (entry.is_regular_file()) {
-				if(entry.path().filename().string().find("nbs-")!=-1)
+				if (entry.path().filename().string().find("nbs-") != -1)
 					continue;
 				files.push_back(entry.path().filename().string());
 				if (files.back().find(".jar") != -1) {
@@ -204,7 +211,7 @@ void drawSettings(float w, float h) {
 			break;
 		}
 		case 1: {
-			if(files.size()==0){
+			if (files.size() == 0) {
 				DrawText("You haven't installed any mods.", 400, 170, 20, BLACK);
 			}
 			int cnt = 0;
@@ -219,40 +226,39 @@ void drawSettings(float w, float h) {
 			}
 
 			if (modIndex != -1) {
-				string sh="[";
-				sh+=files[modIndex][0];
-				sh+=files[modIndex][1];
-				sh+=files[modIndex][2];
-				sh+=files[modIndex][3];
-				sh+=files[modIndex][4];
-				sh+="...] What do you want to do for this mod?";
+				string sh = "[";
+				sh += files[modIndex][0];
+				sh += files[modIndex][1];
+				sh += files[modIndex][2];
+				sh += files[modIndex][3];
+				sh += files[modIndex][4];
+				sh += "...] What do you want to do for this mod?";
 				DrawText(sh.c_str(), 320, 360, 20, BLACK);
 				if (GuiButton((Rectangle) {
-				mW + 55, 400, (854 - mW - 60)/2-5, 40
+				mW + 55, 400, (854 - mW - 60) / 2 - 5, 40
 				}, "Del")) {
-					string shell=R"(del /q C:\RMCL\.minecraft\mods\)"+files[modIndex]+".jar";
+					string shell = R"(del /q C:\RMCL\.minecraft\mods\)" + files[modIndex] + ".jar";
 					system(shell.c_str());
-					modIndex=-1;
+					modIndex = -1;
 				}
 				if (GuiButton((Rectangle) {
-				mW + 60+(854 - mW - 60)/2, 400, (854 - mW - 60)/2-5, 40
+				mW + 60 + (854 - mW - 60) / 2, 400, (854 - mW - 60) / 2 - 5, 40
 				}, "Cancel")) {
 
-					modIndex=-1;
+					modIndex = -1;
 				}
-			}
-			else {
+			} else {
 				if (GuiButton((Rectangle) {
-				mW + 55, 400, (854 - mW - 60)/2-5, 40
+				mW + 55, 400, (854 - mW - 60) / 2 - 5, 40
 				}, "Download the mod")) {
 					system("start https://modrinth.com/mods?v=1.21.1");
 				}
 				if (GuiButton((Rectangle) {
-				mW + 60+(854 - mW - 60)/2, 400, (854 - mW - 60)/2-5, 40
+				mW + 60 + (854 - mW - 60) / 2, 400, (854 - mW - 60) / 2 - 5, 40
 				}, "Install local mods")) {
-					winapi::OPENFILENAME ofn; 
+					winapi::OPENFILENAMEA ofn;
 					char szFile[260];
-					
+
 					ZeroMemory(&ofn, sizeof(ofn));
 					ofn.lStructSize = sizeof(ofn);
 					ofn.hwndOwner = NULL;
@@ -266,10 +272,10 @@ void drawSettings(float w, float h) {
 					ofn.lpstrInitialDir = NULL;
 					ofn.lpstrTitle = "Select a file";
 					ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-					
-					if (winapi::GetOpenFileName(&ofn) == TRUE) {
+
+					if (winapi::GetOpenFileNameA(&ofn) == TRUE) {
 						// 打开文件后的操作
-						string shell="xcopy "+(string)ofn.lpstrFile+R"( C:\RMCL\.minecraft\mods\ /s /e /y)";
+						string shell = "xcopy " + (string)ofn.lpstrFile + R"( C:\RMCL\.minecraft\mods\ /s /e /y)";
 						system(shell.c_str());
 					}
 				}
@@ -278,8 +284,8 @@ void drawSettings(float w, float h) {
 		}
 		case 2: {
 			modIndex = -1;
-			DrawText("RMCL v2.1", 450, 160, 45, BLACK);
-			
+			DrawText("RMCL v2.2", 450, 160, 45, BLACK);
+
 			DrawText("By Next Block Studio", 450, 450, 20, BLACK);
 			break;
 		}
@@ -289,7 +295,6 @@ void drawSettings(float w, float h) {
 
 int main() {
 	winapi::ShowWindow(winapi::GetConsoleWindow(), SW_HIDE);
-//	SetConfigFlags(FLAG_WINDOW_HIGHDPI|FLAG_MSAA_4X_HINT);
 	InitWindow(854, 480, "RMCL");
 	GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
 	SetTargetFPS(60);
@@ -364,6 +369,12 @@ int main() {
 				menuIndex = -1;
 				fpg = 1;
 				fcnt = 0;
+				bg = LoadImage("img\\wp.png");
+				t = LoadTextureFromImage(bg);
+			}
+			if (fcnt == 36) {
+				bg = LoadImage("img\\wp1.png");
+				t = LoadTextureFromImage(bg);
 			}
 			fresh(w, h, 0);
 			drawSettings(w, h);

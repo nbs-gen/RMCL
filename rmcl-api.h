@@ -52,7 +52,7 @@ bool is_e(const string& name) {
 
 void update_name(string a) {
 	fstream fout;
-	fout.open("C:/RMCL/cmcl.json", ios::out);
+	fout.open("C:/RMCL/pack/cmcl.json", ios::out);
 	if (fout.is_open()) {
 		fout << R"({"exitWithMinecraft": false,"javaPath": "C:\\Program Files\\Microsoft\\jdk-21.0.3.9-hotspot\\bin\\java.exe","windowSizeWidth": 854,"windowSizeHeight": 480,"language": "zh","downloadSource": 0,"checkAccountBeforeStart": false,"accounts": [{"playerName": ")" << a << R"(","loginMethod": 0,"selected": true}],"printStartupInfo": false})";
 		fout.close();
@@ -64,44 +64,51 @@ bool ef=0,show=0,fj=0,fm=0;
 string sstr,sts="Play";
 void install_java(){
 	show=1;
-	sstr="Install MSJDK,MSVC";
+	sstr="Install MS-VC";
+	
+	tps=1;
+	thread a([]{
+		double ttps=1;
+		while(tps<=100){
+			ttps+=ttps/400.0;	
+			_sleep(50);
+			tps=ttps;
+		}
+		if(tps>100)
+			tps=100;
+		
+	});
+	a.detach();
 	
 	//自动安装MSVC运行库
 	system("powershell Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vc_redist.x64.exe -OutFile vc_redist.x64.exe");
-	system("vc_redist.x64.exe /install /quiet");
+	system("vc_redist.x64.exe /install /quiet /norestart");
 	system("del vc_redist.x64.exe");
+	
+	
 	
 	//自动安装JDK运行库
 	
-	if(!is_e(R"(C:\RMCL\jdki.msi)")){	
-		system(R"(powershell Invoke-WebRequest -Uri "https://aka.ms/download-jdk/microsoft-jdk-21.0.3-windows-x64.msi" -OutFile "C:\RMCL\jdki.msi")");
-	}
 	
-	system(R"(start C:\RMCL\jdki.msi /passive)"); 
-	winapi::HWND test;
-	int ti=time(0);
-	while(1){
-		if(time(0)-ti>=8){
-			
-			exit(0);
-		}
-		test=Get_HWND("JDK"); 
-		if(test!=NULL){
-			ShowWindow(test, SW_HIDE); 
-			break;
-		}
-		test=Get_HWND("Windows Installer"); 
-		if(test!=NULL){
-			ShowWindow(test, SW_HIDE); 
-			break;
-		}
-	}
-	while(!is_e(R"(C:\Program Files\Microsoft\jdk-21.0.3.9-hotspot\bin\java.exe)"))
-		_sleep(10);
-	_sleep(1000);
+	sstr="Install MS-JDK";
 	
+	tps=1;
+	thread b([]{
+		double ttps=1;
+		while(tps<=100){
+			ttps+=ttps/500.0;	
+			_sleep(50);
+			tps=ttps;
+		}
+		if(tps>100)
+			tps=100;
+		
+	});
+	b.detach();
 	
-	system(R"(del C:\RMCL\jdki.msi)");
+	system(R"(powershell Invoke-WebRequest -Uri "https://aka.ms/download-jdk/microsoft-jdk-21.0.3-windows-x64.msi" -OutFile "jdki.msi")");
+	system(R"(jdki.msi /passive /norestart)");
+	system(R"(del jdki.msi)");
 	show=0;
 	
 	if(system("java -version")==0){
@@ -110,17 +117,6 @@ void install_java(){
 		
 	}
 }
-void install_mod(){
-	
-	system("cd /d C:\\RMCL && echo 2 | cmcl mod --url=https://cdn.modrinth.com/data/RTWpcTBp/versions/5oOaTocZ/mcwifipnp-1.7.3-1.21-forge.jar");
-	system("cd /d C:\\RMCL && echo 2 | cmcl mod --url=https://ghproxy.cn/https://github.com/nbs-gen/RMCL-PACK/blob/main/OptiFine_1.21.1_HD_U_J1.jar");
-}
-void install_cmcl(){
-	if(!is_e(R"(C:\RMCL\cmcl.exe)")){		
-		system(R"(powershell Invoke-WebRequest -Uri "https://gitee.com/MrShiehX/console-minecraft-launcher/releases/download/2.2.2/cmcl.exe" -OutFile "C:\RMCL\cmcl.exe")");
-	}
-}
-
 long long getFileSize(const char *path) {
 	struct stat st;
 	if (stat(path, &st) == 0) {
@@ -160,47 +156,43 @@ void install_minecraft(){
 	tps=1;
 	ef=0;
 	
-	install_cmcl();
 	//NBSMC 附加组件
 	
 	sstr="Install MC 0 %";
-	system(R"(powershell Invoke-WebRequest -Uri "https://gitproxy.click/https://github.com/nbs-gen/RMCL-PACK/blob/main/NRA.zip" -OutFile "C:\RMCL\NRA.zip")");
-	tps=15;
-	sstr="Install MC 15 %";
-	system(R"(powershell Expand-Archive -Path C:\RMCL\NRA.zip -DestinationPath C:\RMCL\)");
-	system(R"(del C:\RMCL\NRA.zip)");
-	tps=20;
+	system(R"(powershell Expand-Archive -Path C:\RMCL\pack\NRA.zip -DestinationPath C:\RMCL\ -Force)");
+	tps=5;
 	
-	sstr="Install MC 20 %";
+	sstr="Install MC 5 %";
 	thread a([]{
-		for(int i=0;i<70;i++){
-			if(ef==1 or tps>90){
-				break;
-			}
+		while(ef==0){
 			long long sizeBytes = getDirSize("C:\\RMCL\\.minecraft");
 			double sizeGB = sizeBytes / (1024.0 * 1024.0 * 1024.0);
-			cout<<sizeGB<<endl;
-			tps=sizeGB/0.85*70+20;
+			tps=sizeGB/0.6*95+5;
 			
-			sstr="Install MC "+to_string(tps)+" % \n\n\n\n\n("+to_string(sizeGB)+"/0.85 GB)";
+			sstr="Install MC "+to_string(tps)+" % \n\n\n\n("+to_string(sizeGB)+"/0.6 GB)";
+			if(tps>=85 and tps<=86)
+				system("taskkill /f /im cmcl.exe");
 			_sleep(1000);
 		}
 	});
 	a.detach();
 	
-	system(R"(cd C:\RMCL & echo y | cmcl install 1.21.1)");
+	system(R"(cd C:\RMCL\ & echo y |  C:\RMCL\pack\cmcl install 1.21.4 -theard=1024)");
 	
-	sstr="Install MC 90 %";
+	sstr="Install MC 75 %";
 	tps=90;
-	ef=1;
-	install_mod();
+	
+	system(R"(cd C:\RMCL\pack\ & java -jar neoforge.jar --install-client C:\RMCL\.minecraft)");
+	system(R"(cd /d C:\RMCL & C:\RMCL\pack\cmcl.exe version neoforge-21.4.76-beta --complete -theard=1024)");
+	
 	sstr="Install MC 100 %";
 	tps=100;
 	show=0;
+	ef=1;
 	
 	long long sizeBytes = getDirSize("C:\\RMCL\\.minecraft");
 	double sizeGB = sizeBytes / (1024.0 * 1024.0 * 1024.0);
-	if(sizeGB<0.5){
+	if(sizeGB<0.4){
 		show=1;
 		ef=1;
 		tps=0;
@@ -212,29 +204,40 @@ void launch_minecraft(){
 	
 	long long sizeBytes = getDirSize("C:\\RMCL\\.minecraft");
 	double sizeGB = sizeBytes / (1024.0 * 1024.0 * 1024.0);
-	if(sizeGB<0.5){
+	if(sizeGB<0.4){
 		system("echo y | rmdir /s C:\\RMCL\\.minecraft\\versions");
 		install_minecraft();
 	}
-	show=1;
-	tps=1;
-	sstr="Check the file";
-	install_cmcl();
-	install_mod();
-	ofstream fout;
 	
-	sstr="Loading the file";
+	show=1;
+	ofstream fout;
+	sstr="Chack the file";
+	tps=1;
+	thread a([]{
+		double ttps=1;
+		cout<<"start";
+		while(tps<=100){
+			ttps+=ttps/20.0;	
+			_sleep(50);
+			tps=ttps;
+		}
+		if(tps>100)
+			tps=100;
+		
+	});
+	a.detach();
+	
+	system(R"(cd /d C:\RMCL & C:\RMCL\pack\cmcl.exe version neoforge-21.4.76-beta --complete -theard=1024)");
 	fout.open("C:\\RMCL\\la.bat");
-	fout<<"cd /d C:\\RMCL & (echo yy | cmcl 1.21.1) & exit";
+	fout<<"cd /d C:\\RMCL & (echo yy | C:\\RMCL\\pack\\cmcl.exe neoforge-21.4.76-beta) & exit";
 	fout.close();
-	tps=50;
+	sstr="Loading the file";
 	system("C:\\RMCL\\la.bat");
-	tps=100;
 	show=0;
 	
 }
 string get_name() {
-	fstream fin("C:/RMCL/cmcl.json", ios::in);
+	fstream fin("C:/RMCL/pack/cmcl.json", ios::in);
 	if (fin.is_open()) {
 		string line, content, key = "\"playerName\": \"";
 		while (getline(fin, line)) content += line;
