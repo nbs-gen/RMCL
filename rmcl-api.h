@@ -169,7 +169,7 @@ void install_minecraft(){
 			double sizeGB = sizeBytes / (1024.0 * 1024.0 * 1024.0);
 			tps=sizeGB/0.6*95+5;
 			
-			sstr="Install MC "+to_string(tps)+" % \n\n\n\n("+to_string(sizeGB)+"/0.6 GB)";
+			sstr="Install MC "+to_string(tps)+" % \n\n\n\n\n\n("+to_string(sizeGB)+"/0.6 GB)";
 			if(tps>=85 and tps<=86)
 				system("taskkill /f /im cmcl.exe");
 			_sleep(1000);
