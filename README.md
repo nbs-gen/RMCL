@@ -1,4 +1,4 @@
-# Rapid Minecraft Launcher 
+# Rapid Minecraft Launcher 2.2
 
 ---
 
@@ -9,7 +9,14 @@
 
 一个为 OIer 而服务的纯 C++ Minecraft 启动器！
 
-为那些刚入坑的玩家提供比 PCL2 更无脑的方式，去游玩这经过方块工作室优化后的 MC
+
+![](https://cdn.luogu.com.cn/upload/image_hosting/b4fhwe57.png)
+
+---
+
+为那些刚入坑的玩家提供比 PCL2 更无脑的方式，去游玩这经过更好的 Minecraft。
+
+---
 
 ## 功能特点
 
@@ -17,20 +24,12 @@
 - **高性能**：优化后的启动速度和游戏体验
 - **兼容性强**：支持多种 Minecraft 版本
 - **开源**：代码公开，欢迎贡献
+- **支持模组和光影**：利用 Neoforge 与 IRIS
 
-![](show1.png)
-
-### 关于 NeoForge
-
-我们很想融入 NeoForge 伟大的圈中，但是安装接口没有开发完整，相信在 RMCL 2.2 时一定能解决
-
-~~还是写了一点点的~~
-↓↓↓
-![](show2.png)
 
 ## 安装指南
 
-1. 下载最新版本的 RMCL 2.1 的源代码
+1. 下载最新版本的 RMCL 2.2 的源代码
 2. 解压文件到 `C:\RMCL\`
 3. 运行 `main.exe` 开始游戏
 
@@ -39,7 +38,7 @@
 - **如何更新 RMCL？**
     - 下载最新版本并覆盖旧文件即可。
 - **遇到启动问题怎么办？**
-    - 请检查是否安装了最新的显卡驱动和 Java 版本。
+    - 发布 Github issues 或在洛谷私信我。
 
 ## 贡献
 
