@@ -15,7 +15,7 @@ namespace fs = filesystem;
 Texture2D userImg;
 Image ai;
 Image hi;
-Image bg;
+Image bg,bg1,bg2;
 bool flagedit = 0;
 char usernameBuffer[64];
 void HandleUsernameInput() {
@@ -251,7 +251,7 @@ void drawSettings(float w, float h) {
 				if (GuiButton((Rectangle) {
 				mW + 55, 400, (854 - mW - 60) / 2 - 5, 40
 				}, "Download the mod")) {
-					system("start https://modrinth.com/mods?v=1.21.1");
+					system("start https://modrinth.com/mods?v=1.21.4");
 				}
 				if (GuiButton((Rectangle) {
 				mW + 60 + (854 - mW - 60) / 2, 400, (854 - mW - 60) / 2 - 5, 40
@@ -305,6 +305,8 @@ int main() {
 	ai = LoadImage("img\\about.png");
 	hi = LoadImage("img\\home.png");
 	bg = LoadImage("img\\wp.png");
+	bg1 = LoadImage("img\\wp1.png");
+	bg2 = LoadImage("img\\wp.png");
 	Texture2D t = LoadTextureFromImage(bg);
 
 	Texture2D ht = LoadTextureFromImage(hi);
@@ -369,11 +371,11 @@ int main() {
 				menuIndex = -1;
 				fpg = 1;
 				fcnt = 0;
-				bg = LoadImage("img\\wp.png");
+				bg = bg2;
 				t = LoadTextureFromImage(bg);
 			}
 			if (fcnt == 36) {
-				bg = LoadImage("img\\wp1.png");
+				bg = bg1;
 				t = LoadTextureFromImage(bg);
 			}
 			fresh(w, h, 0);
