@@ -38,7 +38,7 @@
 - **如何更新 RMCL？**
     - 下载最新版本并覆盖旧文件即可。
 - **遇到启动问题怎么办？**
-    - 发布 Github issues 或在洛谷私信我。
+    - 发布 Github issues 或在[洛谷私信](https://www.luogu.com.cn/chat?uid=661094)我。
 
 ## 贡献
 
