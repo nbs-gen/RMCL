@@ -46,6 +46,6 @@
 
 ## 联系我们
 
-- **官网**: [在这](nbs-gen.github.io)
+- **官网**: [在这](https://nbs-gen.github.io)
 - **Bug反馈**: [Github issues](https://github.com/nbs-gen/RMCL/issues)
 
